@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-const Dropdown = ({ label, children }) => {
+const Dropdown = ({ label, children, selectedCount = 0 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
 
@@ -18,13 +18,22 @@ const Dropdown = ({ label, children }) => {
   return (
     <div
       ref={ref}
-      className="relative text-gray-700 bg-gray-100 whitespace-nowrap inline-block"
+      className="relative text-gray-700 whitespace-nowrap inline-block"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-2 py-1 text-xs"
+        className={`flex items-center gap-2 px-2 py-1 text-xs rounded-md transition-colors ${
+          selectedCount > 0
+            ? "bg-blue-100 text-blue-700 border border-blue-300"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        }`}
       >
         {label}
+        {selectedCount > 0 && (
+          <span className="bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {selectedCount}
+          </span>
+        )}
         <ChevronDown size={14} />
       </button>
 

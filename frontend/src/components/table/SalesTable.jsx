@@ -5,7 +5,7 @@ const SalesTable = ({ data, isLoading }) => {
   const rows = data?.data?.data?.data || [];
 
   return (
-    <div className="w-full overflow-x-auto border border-gray-200 rounded-lg mt-3 scrollbar-thin">
+    <div className="w-full overflow-x-auto m-3 scrollbar-thin">
       <table className="min-w-max w-full border-collapse bg-white">
         <TableHeader />
         <tbody>
@@ -34,3 +34,4 @@ const SalesTable = ({ data, isLoading }) => {
 };
 
 export default SalesTable;
+

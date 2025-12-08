@@ -33,7 +33,7 @@ export default function buildQuery(params) {
     values.push(params.category);
   }
 
-  if (params.tags) {
+  if (params.tags && typeof params.tags === 'string') {
     sql += " AND LOWER(tags) LIKE ?";
     values.push(`%${params.tags.toLowerCase()}%`);
   }
