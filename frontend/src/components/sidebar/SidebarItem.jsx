@@ -3,7 +3,6 @@ import { ChevronDown } from "lucide-react";
 const SidebarItem = ({ label, icon: Icon, active, children, open, onClick }) => {
   return (
     <div className="flex flex-col text-[13px]">
-      {/* parent */}
       <div
         onClick={onClick}
         className={`relative flex items-center justify-between px-2.5 py-2 rounded-md cursor-pointer

@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useDebounce from "../../hooks/useDebounce";
 
 const SearchBar = ({ query, setQuery }) => {
   const [value, setValue] = useState(query.search);
-  const debounced = useDebounce(value, 300);
-
-  useEffect(() => {
-    setQuery(prev => ({ ...prev, search: debounced, page: 1 }));
-  }, [debounced]);
+  
+  const handleDebouncedSearch = (debouncedValue) => {
+    setQuery(prev => ({ ...prev, search: debouncedValue, page: 1 }));
+  };
+  
+  useDebounce(value, handleDebouncedSearch, 300);
 
   return (
     <div className="relative w-80">

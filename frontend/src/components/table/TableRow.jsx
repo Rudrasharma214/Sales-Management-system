@@ -7,12 +7,10 @@ const TableRow = ({ row }) => {
       <td className="px-4 py-3.5 text-sm">{row.date}</td>
       <td className="px-4 py-3.5 text-sm">{row.customer_id}</td>
       <td className="px-4 py-3.5 text-sm">{row.customer_name}</td>
-
       <td className="px-4 py-3.5 text-sm text-gray-700">
         +91 {row.phone_number}
-
         <button
-          onClick={() => copyToClipboard(row.phone_number)}
+          onClick={() => copyToClipboard(`+91 ${row.phone_number}`)}
           className="ml-2 inline-flex items-center justify-center hover:text-gray-700 group"
         >
           <svg
@@ -31,20 +29,15 @@ const TableRow = ({ row }) => {
           </svg>
         </button>
       </td>
-
       <td className="px-4 py-3.5 text-sm">{row.gender}</td>
       <td className="px-4 py-3.5 text-sm">{row.age}</td>
-
       <td className="px-4 py-3.5 text-sm">{row.product_category}</td>
       <td className="px-4 py-3.5 text-sm">{row.quantity}</td>
-
       <td className="px-4 py-3.5 text-sm">
         ₹ {row.total_amount?.toLocaleString()}
       </td>
-
       <td className="px-4 py-3.5 text-sm">{row.customer_region}</td>
       <td className="px-4 py-3.5 text-sm">{row.product_id}</td>
-
       <td className="px-4 py-3.5 text-sm">{row.employee_name}</td>
     </tr>
   );

@@ -1,24 +1,19 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 
 const Dropdown = ({ label, children, selectedCount = 0 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
 
-  useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
-
   return (
     <div
       ref={ref}
       className="relative text-gray-700 whitespace-nowrap inline-block"
+      onClickCapture={(e) => {
+        if (ref.current && !ref.current.contains(e.target)) {
+          setOpen(false);
+        }
+      }}
     >
       <button
         onClick={() => setOpen(!open)}
