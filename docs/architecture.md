@@ -2,135 +2,130 @@
 
 ## Backend Architecture
 
-The backend implements a layered architecture with clear separation of concerns across controllers, services, utilities, and configuration.
+The backend is organized in layers where each part has a specific job.
 
 Entry Point (src/index.js):
-Initializes Express server with CORS configuration and middleware setup. Creates database indexes on startup. Listens on port 3000 by default. Provides health check endpoint at GET /api/health.
+Starts the Express server. Sets up CORS rules and middleware. Creates database indexes when the server starts. Runs on port 3000. Has a health check endpoint at GET /api/health to test if the API is working.
 
 Controller Layer (src/controllers/sales.controller.js):
-Validates and normalizes all incoming query parameters. Implements normalizeParam function to handle array-to-string conversion from axios. Implements validateNumeric for type validation with error messages. Checks age range conflicts preventing invalid To less than From conditions. Passes validated parameters to service layer.
+Checks all incoming query parameters. Cleans up parameters using normalizeParam function to convert arrays to strings (because axios sends data differently). Checks if numbers are valid using validateNumeric. Makes sure age ranges don't have mistakes (like From being bigger than To). Sends clean data to the service layer.
 
 Service Layer (src/services/sales.service.js):
-Executes query building and database operations. Calculates pagination metadata including total items, total pages, and hasNext flag. Handles database errors and passes them to middleware.
+Takes the clean parameters and builds a SQL query. Runs the query on the database. Counts total items, total pages, and checks if there's a next page. Sends results back to the controller.
 
 Utility Layer:
-- buildQuery.js: Constructs parameterized SQL queries with WHERE clauses for all filters. Implements sorting with ORDER BY. Applies LIMIT and OFFSET for pagination.
-- sendResponse.js: Standardizes all API response formats with success flag, status codes, messages, and data.
-- statusCode.js: Defines HTTP status constants (200, 400, 404, 500).
-- AppError.js: Custom error class extending Error for consistent error handling.
+- buildQuery.js: Creates the SQL query with filter conditions, sorting, and pagination.
+- sendResponse.js: Formats all responses in the same way with status, message, and data.
+- statusCode.js: Stores HTTP status codes (200, 400, 404, 500).
+- AppError.js: Custom error class for consistent error handling.
 
 Middleware:
-- error.middleware.js: Catches all errors from controllers and services. Formats error responses with status codes and messages.
+- error.middleware.js: Catches all errors that happen anywhere. Formats them nicely and sends error messages back to the frontend.
 
 Configuration:
-- db.js: Initializes SQLite database connection. Loads CSV data into database on startup.
-- indexes.js: Creates indexes on frequently queried columns (customer_name, phone_number, date, product_category, tags, payment_method) for performance optimization.
+- db.js: Opens a connection to the SQLite database file. The database and data are loaded only once at the start, not every time the server runs.
+- indexes.js: Creates database indexes to make searches fast. Uses IF NOT EXISTS so it only creates them if they don't already exist.
 
-Database Schema:
-Sales table contains customer fields (name, region, gender, age, phone), product fields (category, tags), transaction fields (quantity, amount, payment_method, date), and operational fields. All required columns from assignment specifications are included.
+Database:
+The sales table stores customer info (name, region, gender, age, phone), product info (category, tags), transaction info (quantity, amount, payment method, date), and other fields. All the data required by the assignment is included.
 
 ## Frontend Architecture
 
-The frontend implements a component-based architecture with custom hooks for state management and services for API communication.
+The frontend uses React with a component-based design. Each component does one job well.
 
 Entry Point (src/main.jsx):
-Mounts React application to DOM element. Loads global CSS styles from styles/index.css. Initializes React Query client with default cache and retry settings.
+Starts the React app and puts it in the HTML page. Loads styles. Sets up React Query for getting data from the server.
 
 Page Layer (src/pages/SalesPage.jsx):
-Orchestrates all feature components. Uses useSalesQuery hook to manage application state. Passes query state and setQuery function to child components. Renders layout with Header, Sidebar, FiltersBar, KpiCard, SalesTable, and Pagination.
+The main page that puts all pieces together. Uses the useQuery hook to manage all the data and state. Passes the query state down to child components. Shows the header, sidebar, filters, table, and pagination.
 
 Component Layer:
 
 Header Components:
-- Header.jsx: Displays application header with branding.
-- SearchBar.jsx: Provides full-text search input. Uses useDebounce hook for 300ms debouncing. Calls setQuery on debounced changes.
+- Header.jsx: Shows the app name and branding at the top.
+- SearchBar.jsx: The search box where users type. Waits 300ms before calling the API to avoid too many requests.
 
 Filter Components:
-- FiltersBar.jsx: Main filter container managing pending filters state. Uses useFilters hook for filter operations. Displays Apply, Cancel, and Reset buttons. Shows buttons only when filters are selected.
-- FiltersDropdown.jsx: Individual filter selector with checkboxes. Displays badge counts showing selected items. Supports multi-select for all filter types.
-- SortDropdown.jsx: Sorting options selector. Allows selection of date, quantity, or name sorting.
+- FiltersBar.jsx: The main filter container. Keeps filters in a "pending" state until the user clicks Apply. Shows Apply, Cancel, and Reset buttons. Buttons only show when filters are selected.
+- FiltersDropdown.jsx: Individual filter dropdowns with checkboxes. Shows how many items are selected in each filter.
+- SortDropdown.jsx: Let users choose how to sort the results (by date, quantity, or name).
 
 Table Components:
-- SalesTable.jsx: Renders data in table format with headers and rows.
-- TableHeader.jsx: Defines column headers.
-- TableRow.jsx: Displays individual sales records.
+- SalesTable.jsx: Shows the data in a table with headers and rows.
+- TableHeader.jsx: The column names at the top.
+- TableRow.jsx: Each row of data.
 
-Navigation Components:
-- Sidebar.jsx: Navigation menu container.
+Other Components:
+- Sidebar.jsx: Navigation menu on the side.
 - SidebarItem.jsx: Individual menu items.
+- KpiCard.jsx: Shows important numbers like total sales.
+- Pagination.jsx: Previous and Next buttons to go through pages.
 
-Display Components:
-- KpiCard.jsx: Displays key performance indicators.
-- Pagination.jsx: Previous/Next navigation controls. Disables buttons based on position.
-
-Hook Layer (src/hooks/):
-- useQuery.js: Manages centralized state for search, filters, sorting, pagination. Provides single source of truth. Integrates with React Query for server-side caching.
-- useDebounce.js: Debounces input values at 300ms intervals. Accepts callback and dependencies. Reduces API calls during rapid typing.
-- useFilters.js: Manages filter state with toggleFilter, setFilter, resetFilters methods. Computes hasSelectedFilters flag.
-- useValidation.js: Provides form validation utilities including field validation and error management.
+Custom Hooks (src/hooks/):
+- useQuery.js: Keeps track of search, filters, sorting, and page number. This is the center of all data. Works with React Query to cache data.
+- useDebounce.js: Delays the search input by 300ms to reduce API calls while typing.
+- useFilters.js: Manages the filter state. Has methods to toggle filters, set filters, and reset them.
+- useValidation.js: Checks if form data is correct and manages error messages.
 
 Service Layer (src/services/salesService.js):
-Exports getSales function making API calls to backend. Constructs query parameters from state object. Handles errors and returns formatted data to components.
+Calls the backend API. Sends query parameters and gets data back. Handles errors.
 
 Routing:
-AppRoutes.jsx defines application routes. Currently uses single page with dashboard layout.
+AppRoutes.jsx sets up the routes. Right now there's just one page (the dashboard).
 
 Styling:
-Global styles in styles/index.css. Tailwind CSS utility classes in components for responsive design.
+All styles are in styles/index.css. Uses Tailwind CSS classes in components for quick styling.
 
 ## Data Flow
 
-Search Flow:
-1. User types in SearchBar component
-2. onChange event triggers setQuery with search value
-3. useQuery hook receives updated query
-4. useDebounce delays API call by 300ms
-5. useQuery updates queryKey triggering React Query re-fetch
-6. Frontend makes GET request to /api/sales with search parameter
-7. Backend normalizes search parameter
-8. buildQuery generates SQL with LOWER and LIKE operators
-9. Database query returns matching results
-10. Results flow back through service, response formatted, and table updates
+How Search Works:
+1. User types in the search box
+2. setQuery updates the search value
+3. useDebounce waits 300ms
+4. React Query sees the change and calls the API
+5. Frontend sends GET /api/sales with the search term
+6. Backend normalizes the search term
+7. buildQuery creates a SQL query using LOWER and LIKE to find matches
+8. Database returns matching results
+9. Table updates with results
 
-Filter Flow:
-1. User selects filter in FiltersDropdown
-2. Pending filter state updates without API call
+How Filters Work:
+1. User clicks a checkbox in a filter dropdown
+2. The pending filter state updates (no API call yet)
 3. User clicks Apply button
-4. pendingFilters merge into query state
-5. Query reset to page 1
-6. React Query refetches with new filter parameters
-7. Backend builds query with WHERE clauses for each filter
-8. Filters combine using AND logic
-9. Results return and table updates
-10. User can click Cancel to discard pending changes
+4. Pending filters move into the main query state
+5. Page resets to 1
+6. React Query calls the API with new filters
+7. Backend adds WHERE conditions to the SQL query
+8. All filters combine with AND (all must be true)
+9. Results come back and table updates
+10. User can click Cancel to undo pending changes
 
-Sort Flow:
-1. User selects sort option in SortDropdown
-2. onChange triggers setQuery with sort value
-3. React Query refetches with sort parameter
-4. Backend builds query with ORDER BY clause
-5. Results returned in sorted order
-6. Table re-renders with sorted data
+How Sorting Works:
+1. User picks a sort option from the dropdown
+2. setQuery updates the sort value
+3. React Query calls the API
+4. Backend adds ORDER BY to the SQL query
+5. Results come back sorted
+6. Table shows sorted data
 
-Pagination Flow:
-1. User clicks Previous or Next button
-2. Pagination component updates page in query state
-3. React Query refetches with new page parameter
-4. Backend calculates offset as (page - 1) * 10
-5. SQL query applies LIMIT 10 OFFSET value
-6. Results from that page returned
-7. Table displays new set of 10 items
-8. Current page metadata updates navigation buttons
+How Pagination Works:
+1. User clicks Next or Previous button
+2. The page number updates in the query state
+3. React Query calls the API with new page number
+4. Backend calculates offset as (page - 1) times 10
+5. SQL query uses LIMIT 10 OFFSET value to get the right 10 rows
+6. Table shows the new 10 rows
+7. Buttons update based on current page
 
-Combined Flow Example (search + filters + sort + pagination):
-1. User searches for term, selects filters, chooses sort, navigates pages
-2. Each action updates corresponding part of query state
-3. React Query detects queryKey change (combines all parameters)
-4. Single GET request to /api/sales with all query parameters
-5. Backend applies all conditions in single parameterized query
-6. Database filters results through WHERE clauses, sorts with ORDER BY, paginates with LIMIT/OFFSET
-7. Response includes data and pagination metadata
-8. Frontend renders updated table with all active conditions applied
+How It All Works Together:
+When a user searches, filters, sorts, and navigates pages:
+1. Each action updates part of the query state
+2. React Query sees the change (all params are combined as the queryKey)
+3. One GET request is sent to /api/sales with all parameters
+4. Backend runs one query that applies search, filters, sorting, and pagination
+5. Results come back with data and page info
+6. Table updates with everything applied
 
 ## Folder Structure
 
@@ -138,24 +133,24 @@ Combined Flow Example (search + filters + sort + pagination):
 backend/
   src/
     controllers/
-      sales.controller.js - Validates and normalizes request parameters
+      sales.controller.js - Checks and cleans request parameters
     services/
-      sales.service.js - Executes queries and formats responses
+      sales.service.js - Runs queries and formats data
     utils/
-      buildQuery.js - Constructs parameterized SQL queries
-      sendResponse.js - Standardizes response format
-      statusCode.js - HTTP status constants
-      AppError.js - Custom error class
+      buildQuery.js - Builds the SQL query
+      sendResponse.js - Formats API responses
+      statusCode.js - HTTP status codes
+      AppError.js - Custom errors
     routes/
-      sales.routes.js - Defines GET /api/sales endpoint
+      sales.routes.js - The /api/sales endpoint
     middleware/
-      error.middleware.js - Global error handler
+      error.middleware.js - Catches and handles errors
     config/
-      db.js - Database initialization and CSV import
-      indexes.js - Index creation for performance
+      db.js - Opens database connection
+      indexes.js - Creates database indexes
     data/
-      sales.csv - Source data file
-    index.js - Express server entry point
+      sales.csv - The sales data file
+    index.js - Server entry point
   package.json
   README.md
 
@@ -164,158 +159,164 @@ frontend/
     components/
       filters/
         FiltersBar.jsx - Main filter container
-        FiltersDropdown.jsx - Individual filter selectors
-        SortDropdown.jsx - Sort options selector
-        Dropdown.jsx - Reusable dropdown component
+        FiltersDropdown.jsx - Individual filters with checkboxes
+        SortDropdown.jsx - Sort selector
+        Dropdown.jsx - Reusable dropdown
       header/
-        Header.jsx - Application header
-        SearchBar.jsx - Search input with debouncing
+        Header.jsx - Top header
+        SearchBar.jsx - Search input
       table/
-        SalesTable.jsx - Main table container
-        TableHeader.jsx - Column headers
-        TableRow.jsx - Individual rows
-        Pagination.jsx - Navigation controls
+        SalesTable.jsx - Table container
+        TableHeader.jsx - Column names
+        TableRow.jsx - Data rows
+        Pagination.jsx - Page navigation
       kpi/
-        KpiCard.jsx - Key performance indicators
+        KpiCard.jsx - Info cards
       sidebar/
-        Sidebar.jsx - Navigation menu
+        Sidebar.jsx - Side menu
         SidebarItem.jsx - Menu items
     hooks/
-      useQuery.js - Central query state management
-      useDebounce.js - Debounce utility with callback
-      useFilters.js - Filter state management
-      useValidation.js - Form validation utilities
+      useQuery.js - Manages all query state
+      useDebounce.js - Delays input
+      useFilters.js - Manages filters
+      useValidation.js - Validates forms
     pages/
       SalesPage.jsx - Main page layout
     routes/
-      AppRoutes.jsx - Route definitions
+      AppRoutes.jsx - App routes
     services/
-      salesService.js - API communication
+      salesService.js - Calls the API
     styles/
       index.css - Global styles
     App.jsx - Root component
-    main.jsx - React entry point
+    main.jsx - App entry point
   package.json
   README.md
 
 docs/
-  architecture.md - This document
+  architecture.md - This file
 
-.env - Environment variables
-README.md - Project README
+.env - Settings
+README.md - Main documentation
 assignment.md - Assignment requirements
 ```
 
-## Module Responsibilities
+## What Each Module Does
 
-Backend Modules:
+Backend:
 
 sales.controller.js:
-- Accept HTTP requests
-- Extract and normalize query parameters
-- Validate numeric inputs and ranges
-- Handle parameter errors gracefully
-- Pass validated data to service layer
+- Gets HTTP requests
+- Extracts and cleans query parameters
+- Checks if numbers are valid
+- Checks age ranges (From should not be bigger than To)
+- Handles errors from bad inputs
+- Sends clean data to the service
 
 sales.service.js:
-- Call buildQuery to construct SQL
-- Execute query on SQLite database
-- Calculate pagination metadata
-- Format and structure response data
-- Handle database errors
+- Calls buildQuery to create SQL
+- Runs SQL on the database
+- Counts total items and pages
+- Formats the response
+- Handles database errors
 
 buildQuery.js:
-- Accept parameter object
-- Construct base SELECT statement
-- Build WHERE clauses for filters
-- Add ORDER BY for sorting
-- Apply LIMIT and OFFSET for pagination
-- Return SQL string and parameterized values array
+- Takes parameters
+- Creates SELECT statement
+- Adds WHERE for each filter
+- Adds ORDER BY for sorting
+- Adds LIMIT and OFFSET for pagination
+- Returns the SQL and the values to use
+
+sendResponse.js:
+- Formats all success responses in the same way
+- Every response has: success flag, message, data, and status code
+- Used everywhere in the app to keep responses consistent
+- Makes the frontend know exactly what to expect from the API
+
+AppError.js:
+- Custom error class that extends JavaScript Error
+- Carries both an error message and an HTTP status code
+- Captures stack trace showing exactly where the error started
+- Stack trace shows file name, line number, and function names in the call chain
 
 error.middleware.js:
-- Catch errors from all layers
-- Format error responses
-- Return appropriate HTTP status codes
-- Send error messages to frontend
-
-db.js:
-- Initialize SQLite database
-- Create tables if not exist
-- Load CSV data into database
-- Maintain database connection
+- Global error handler that catches ALL errors from anywhere in the app
+- If error is AppError, uses its status code. Otherwise uses 500 (internal error)
+- Formats errors into responses and sends them back to frontend
+- In development: shows full stack trace for debugging
+- In production: hides stack trace for security (doesn't expose code to hackers)
+- Stack trace tracing: shows the complete call chain from where error started to where it was caught
 
 indexes.js:
-- Create indexes on search columns
-- Create indexes on filter columns
-- Create indexes on sort columns
-- Optimize query performance
+- Creates indexes on search columns
+- Creates indexes on filter columns
+- Creates indexes on sort columns
+- Only creates if they don't exist (idempotent)
 
-Frontend Modules:
+Frontend:
 
 SalesPage.jsx:
-- Initialize sales query hook
-- Manage page-level state
-- Orchestrate all child components
-- Handle loading and error states
-- Structure page layout
+- Sets up the query hook
+- Manages page state
+- Shows all child components
+- Shows loading and error states
+- Arranges the page layout
 
 SearchBar.jsx:
-- Capture user search input
-- Debounce input changes
-- Trigger query updates
-- Display search term
+- Gets user input
+- Delays the input (debounce)
+- Updates the query
+- Shows what the user typed
 
 FiltersBar.jsx:
-- Manage pending filter state
-- Orchestrate filter dropdowns
-- Display Apply, Cancel, Reset buttons
-- Coordinate filter operations
+- Keeps filters before they're applied
+- Shows filter dropdowns
+- Shows Apply, Cancel, Reset buttons
+- Manages filter actions
 
 FiltersDropdown.jsx:
-- Display individual filter options
-- Handle checkbox selection
-- Show selected item counts
-- Support multi-select
+- Shows filter options with checkboxes
+- Counts selected items
+- Lets users pick multiple items
 
 SortDropdown.jsx:
-- Display sorting options
-- Handle sort selection
-- Update query state
+- Shows sort options
+- Updates sort when user chooses
+- Updates the query
 
 SalesTable.jsx:
-- Render filtered and sorted data
-- Display data in table format
-- Show row count
+- Shows data in table format
+- Has headers and rows
+- Shows how many items
 
 Pagination.jsx:
-- Display page navigation controls
-- Handle page changes
-- Calculate button disabled states
-- Show current page and total
+- Shows Previous and Next buttons
+- Disables buttons when needed
+- Shows current page number
 
 useQuery.js:
-- Maintain search term state
-- Maintain filter selections state
-- Maintain sort selection state
-- Maintain page number state
-- Integrate with React Query
-- Provide queryKey for caching
+- Stores search term
+- Stores filter selections
+- Stores sort choice
+- Stores page number
+- Works with React Query for caching
 
 useDebounce.js:
-- Delay callback execution
-- Accept customizable delay interval
-- Return debounced value
-- Clean up timers on unmount
+- Delays function execution
+- Waits 300ms by default
+- Cleans up timers when done
+- Returns delayed value
 
 useFilters.js:
-- Manage pending filter state
-- Provide toggleFilter method
-- Provide setFilter method
-- Provide resetFilters method
-- Compute hasSelectedFilters flag
+- Stores pending filter state
+- toggleFilter method - turns filter on/off
+- setFilter method - sets a whole filter group
+- resetFilters method - clears all filters
+- hasSelectedFilters flag - tells if any filter is selected
 
 salesService.js:
-- Make API requests to backend
-- Construct axios calls with query parameters
-- Handle API responses
-- Handle API errors
+- Calls the backend API
+- Sends query parameters
+- Gets results back
+- Handles API errors
