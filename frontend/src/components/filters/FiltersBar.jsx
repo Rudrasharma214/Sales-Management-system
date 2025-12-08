@@ -25,7 +25,6 @@ const FiltersBar = ({ query, setQuery }) => {
     }));
   };
 
-  // Check if any filter is actually selected
   const hasSelectedFilters =
     pendingFilters.region.length > 0 ||
     pendingFilters.gender.length > 0 ||
@@ -58,27 +57,28 @@ const FiltersBar = ({ query, setQuery }) => {
         <div className="mt-3 ml-2 flex gap-2">
           <button
             onClick={handleApplyFilters}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors font-medium"
-            title="Apply selected filters"
+            className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-sm hover:bg-blue-700 transition-colors font-medium"
           >
-            Apply Filters
+            Apply
           </button>
+
           <button
-            onClick={() => setPendingFilters({
-              search: query.search || "",
-              region: query.region || [],
-              gender: query.gender || [],
-              ageFrom: query.ageFrom || "",
-              ageTo: query.ageTo || "",
-              category: query.category || [],
-              tags: query.tags || [],
-              payment: query.payment || [],
-              dateFrom: query.dateFrom || "",
-              dateTo: query.dateTo || "",
-              sort: query.sort || "",
-            })}
-            className="px-4 py-2 bg-gray-400 text-white text-sm rounded-md hover:bg-gray-500 transition-colors font-medium"
-            title="Cancel pending changes"
+            onClick={() =>
+              setPendingFilters({
+                search: query.search || "",
+                region: query.region || [],
+                gender: query.gender || [],
+                ageFrom: query.ageFrom || "",
+                ageTo: query.ageTo || "",
+                category: query.category || [],
+                tags: query.tags || [],
+                payment: query.payment || [],
+                dateFrom: query.dateFrom || "",
+                dateTo: query.dateTo || "",
+                sort: query.sort || "",
+              })
+            }
+            className="px-2 py-0.5 bg-gray-400 text-white text-xs rounded-sm hover:bg-gray-500 transition-colors font-medium"
           >
             Cancel
           </button>

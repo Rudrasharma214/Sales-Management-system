@@ -2,9 +2,9 @@
 
 
 .scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
   height: 6px;
 }
-
 .scrollbar-thin::-webkit-scrollbar-track {
   background: #f1f1f1; 
   border-radius: 10px;

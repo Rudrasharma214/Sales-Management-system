@@ -16,7 +16,7 @@ const SalesPage = () => {
     <div className="flex h-screen overflow-x-auto overflow-hidden">
       <Sidebar />
 
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white">
+      <main className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-thin bg-white">
         <Header query={query} setQuery={setQuery} />
 
         <div className="mb-4">

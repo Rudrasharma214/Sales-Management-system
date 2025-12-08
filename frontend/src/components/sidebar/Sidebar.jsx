@@ -9,7 +9,7 @@ import {
   CheckCircle,
   FileText,
   ClipboardList,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 
 import SidebarItem from "./SidebarItem.jsx";
@@ -19,20 +19,28 @@ const Sidebar = () => {
   const [invoicesOpen, setInvoicesOpen] = useState(true);
 
   return (
-    <aside className="h-screen w-55 bg-[#F8F9FA] border-r border-gray-200 flex flex-col">
+    <aside className="h-screen w-60 bg-gray-100  flex flex-col">
 
-      <div className="px-3 py-3 flex items-center gap-2  bg-transparent">
-        <img src="/logo.png" alt="Vault Logo" className="w-10 h-10 rounded-lg object-cover" />
+      <div className="m-2 bg-white rounded-md border border-gray-200">
+        <div className="px-1 py-2 flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt="Vault Logo"
+            className="w-10 h-10 rounded-lg object-cover"
+          />
 
-        <div className="flex flex-col leading-tight">
-          <span className="text-[16px] font-semibold text-gray-900">Vault</span>
-          <span className="text-[14px] text-gray-500">Anurag Yadav</span>
+          <div className="flex flex-col">
+            <span className="text-[15px] font-semibold text-gray-900">
+              Vault
+            </span>
+            <span className="text-[13px] text-gray-500">Anurag Yadav</span>
+          </div>
+
+          <ChevronDown size={14} className="ml-auto text-gray-500" />
         </div>
-          <ChevronDown size={14} />
       </div>
 
-      <nav className="flex-1 px-2 py-3 flex flex-col gap-1.5">
-
+      <nav className="flex-1 px-2 py-2 flex flex-col gap-1">
         <SidebarItem label="Dashboard" icon={LayoutDashboard} active />
         <SidebarItem label="Nexus" icon={FolderTree} />
         <SidebarItem label="Intake" icon={Inbox} />
@@ -43,10 +51,10 @@ const Sidebar = () => {
           open={servicesOpen}
           onClick={() => setServicesOpen(!servicesOpen)}
           children={[
-            <SidebarItem key="1" label="Pre-active" icon={CircleDot} />,
-            <SidebarItem key="2" label="Active" icon={CheckCircle} />,
-            <SidebarItem key="3" label="Blocked" icon={Ban} />,
-            <SidebarItem key="4" label="Closed" icon={Circle} />,
+            { label: "Pre-active", icon: CircleDot },
+            { label: "Active", icon: CheckCircle },
+            { label: "Blocked", icon: Ban },
+            { label: "Closed", icon: Circle },
           ]}
         />
 
@@ -56,11 +64,10 @@ const Sidebar = () => {
           open={invoicesOpen}
           onClick={() => setInvoicesOpen(!invoicesOpen)}
           children={[
-            <SidebarItem key="1" label="Proforma Invoices" icon={FileText} active />,
-            <SidebarItem key="2" label="Final Invoices" icon={FileText} />,
+            { label: "Proforma Invoices", icon: FileText, active: true },
+            { label: "Final Invoices", icon: FileText },
           ]}
         />
-
       </nav>
     </aside>
   );
