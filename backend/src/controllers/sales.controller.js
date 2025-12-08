@@ -53,7 +53,7 @@ export default function getSales(req, res, next) {
         ageTo = validateNumeric(req.query.ageTo, "Age To");
       }
       if (ageFrom && ageTo && ageFrom > ageTo) {
-        throw new Error("Age From cannot be greater than Age To");
+        throw new Error("Age From cannot be greater than Age To", STATUS.BAD_REQUEST);
       }
     } catch (err) {
       throw new Error(`Invalid age parameter: ${err.message}`);
