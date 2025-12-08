@@ -18,3 +18,7 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #9e9e9e;
 }
+
+.animate-spin-slow {
+  animation: spin 2s linear infinite;
+}

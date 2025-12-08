@@ -6,10 +6,9 @@ import SalesTable from "../components/table/SalesTable.jsx";
 import FiltersBar from "../components/filters/FiltersBar.jsx";
 import { Pagination } from "../components/table/Pagination.jsx";
 
-
 const SalesPage = () => {
   const { query, setQuery, data, isLoading, isError } = useSalesQuery();
-  
+
   const pagination = data?.data?.data?.pagination;
 
   return (
@@ -20,10 +19,7 @@ const SalesPage = () => {
         <Header query={query} setQuery={setQuery} />
 
         <div className="mb-4">
-          <FiltersBar
-            query={query}
-            setQuery={setQuery}
-          />
+          <FiltersBar query={query} setQuery={setQuery} />
         </div>
 
         <div className="flex gap-3 m-4">
@@ -33,9 +29,13 @@ const SalesPage = () => {
         </div>
 
         {isLoading ? (
-          <p>Loading...</p>
+          <div className="text-center py-4 text-sm text-gray-600">
+            Loading...
+          </div>
         ) : isError ? (
-          <p>Error loading data</p>
+          <div className="text-center py-4 text-sm text-red-500">
+            Error loading data
+          </div>
         ) : (
           <>
             <SalesTable data={data} isLoading={isLoading} />

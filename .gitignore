@@ -1,4 +1,2 @@
-backend/src/data/*
-!backend/src/data/sales.db
 *.pdf
 assignment.md
