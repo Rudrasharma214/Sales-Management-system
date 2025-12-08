@@ -5,13 +5,15 @@ import errorHandler from "./middleware/error.middleware.js";
 import { createIndexes } from "./config/indexes.js";
 import { sendResponse } from "./utils/sendResponse.js";
 import STATUS from "./utils/statusCode.js";
+import dotenv from "dotenv";
+dotenv.config({quiet: true});
+
+const port = process.env.PORT || 3000;
 
 createIndexes();
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173"
-];
+const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [];
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -33,8 +35,8 @@ app.get("/api/health", (req, res) => {
   sendResponse(res, STATUS.OK, "API is healthy", { status: "OK" });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
 
 app.use(errorHandler);

@@ -1,60 +1,35 @@
+import { useCallback } from "react";
 import Dropdown from "./Dropdown";
 
-const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
-  const toggle = (field, value) => {
-    setPendingFilters((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((x) => x !== value)
-        : [...prev[field], value],
-    }));
-  };
 
-  const set = (field, value) => {
-    setPendingFilters((prev) => ({ ...prev, [field]: value }));
-  };
+const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
+
+  const toggleFilter = useCallback(
+    (field, value) => {
+      setPendingFilters((prev) => ({
+        ...prev,
+        [field]: prev[field].includes(value)
+          ? prev[field].filter((x) => x !== value)
+          : [...prev[field], value],
+      }));
+    },
+    [setPendingFilters]
+  );
+
+  const setFilter = useCallback(
+    (field, value) => {
+      setPendingFilters((prev) => ({ ...prev, [field]: value }));
+    },
+    [setPendingFilters]
+  );
 
   return (
     <>
-      <button
-        onClick={() => {
-          setPendingFilters({
-            search: "",
-            region: [],
-            gender: [],
-            ageFrom: "",
-            ageTo: "",
-            category: [],
-            tags: [],
-            payment: [],
-            dateFrom: "",
-            dateTo: "",
-            sort: "",
-          });
-        }}
-        className="p-2 hover:bg-gray-200 rounded-md transition-colors"
-        title="Reset filters"
-      >
-        <svg
-          className="w-4 h-4 text-gray-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-          />
-        </svg>
-      </button>
-
       <Dropdown label="Customer Region" selectedCount={pendingFilters.region.length}>
         {["North", "South", "East", "West", "Central"].map((r) => (
           <button
             key={r}
-            onClick={() => toggle("region", r)}
+            onClick={() => toggleFilter("region", r)}
             className="flex items-center gap-2 w-full text-left"
           >
             <input
@@ -72,7 +47,7 @@ const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
         {["Male", "Female"].map((g) => (
           <button
             key={g}
-            onClick={() => toggle("gender", g)}
+            onClick={() => toggleFilter("gender", g)}
             className="flex items-center gap-2 w-full text-left"
           >
             <input
@@ -86,31 +61,43 @@ const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
         ))}
       </Dropdown>
 
-      <Dropdown label="Age Range" selectedCount={pendingFilters.ageFrom || pendingFilters.ageTo ? 1 : 0}>
+      <Dropdown
+        label="Age Range"
+        selectedCount={pendingFilters.ageFrom || pendingFilters.ageTo ? 1 : 0}
+      >
         <div className="flex flex-col gap-2 p-2 w-40">
           <input
             type="number"
             placeholder="From"
+            min="0"
+            max="120"
             className="border px-2 py-1 rounded w-full"
             value={pendingFilters.ageFrom}
-            onChange={(e) => set("ageFrom", e.target.value)}
+            onChange={(e) => setFilter("ageFrom", e.target.value)}
+            aria-label="Minimum age"
           />
           <input
             type="number"
             placeholder="To"
+            min="0"
+            max="120"
             className="border px-2 py-1 rounded w-full"
             value={pendingFilters.ageTo}
-            onChange={(e) => set("ageTo", e.target.value)}
+            onChange={(e) => setFilter("ageTo", e.target.value)}
+            aria-label="Maximum age"
           />
         </div>
       </Dropdown>
 
-      <Dropdown label="Product Category" selectedCount={pendingFilters.category.length}>
+      <Dropdown
+        label="Product Category"
+        selectedCount={pendingFilters.category.length}
+      >
         {["Electronics", "Clothing", "Furniture", "Beauty", "Sports"].map(
           (c) => (
             <button
               key={c}
-              onClick={() => toggle("category", c)}
+              onClick={() => toggleFilter("category", c)}
               className="flex items-center gap-2 w-full text-left"
             >
               <input
@@ -129,7 +116,7 @@ const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
         {["wireless", "smart", "portable", "premium", "durable"].map((t) => (
           <button
             key={t}
-            onClick={() => toggle("tags", t)}
+            onClick={() => toggleFilter("tags", t)}
             className="flex items-center gap-2 w-full text-left"
           >
             <input
@@ -143,11 +130,14 @@ const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
         ))}
       </Dropdown>
 
-      <Dropdown label="Payment Method" selectedCount={pendingFilters.payment.length}>
+      <Dropdown
+        label="Payment Method"
+        selectedCount={pendingFilters.payment.length}
+      >
         {["UPI", "Cash", "Credit Card", "Debit Card"].map((p) => (
           <button
             key={p}
-            onClick={() => toggle("payment", p)}
+            onClick={() => toggleFilter("payment", p)}
             className="flex items-center gap-2 w-full text-left"
           >
             <input
@@ -161,17 +151,22 @@ const FiltersDropdown = ({ pendingFilters, setPendingFilters }) => {
         ))}
       </Dropdown>
 
-      <Dropdown label="Date Range" selectedCount={pendingFilters.dateFrom || pendingFilters.dateTo ? 1 : 0}>
+      <Dropdown
+        label="Date Range"
+        selectedCount={pendingFilters.dateFrom || pendingFilters.dateTo ? 1 : 0}
+      >
         <div className="flex flex-col gap-2 p-2 w-40">
           <input
             type="date"
             value={pendingFilters.dateFrom}
-            onChange={(e) => set("dateFrom", e.target.value)}
+            onChange={(e) => setFilter("dateFrom", e.target.value)}
+            aria-label="Start date"
           />
           <input
             type="date"
             value={pendingFilters.dateTo}
-            onChange={(e) => set("dateTo", e.target.value)}
+            onChange={(e) => setFilter("dateTo", e.target.value)}
+            aria-label="End date"
           />
         </div>
       </Dropdown>

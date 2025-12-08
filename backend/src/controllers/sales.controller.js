@@ -2,29 +2,76 @@ import salesService from "../services/sales.service.js";
 import { sendResponse } from "../utils/sendResponse.js";
 import STATUS from '../utils/statusCode.js';
 
+
+const normalizeParam = (param) => {
+  if (Array.isArray(param)) {
+    return param[0]?.toString().trim() || "";
+  }
+  return param?.toString().trim() || "";
+};
+
+const validateNumeric = (value, fieldName) => {
+  if (!value) return null;
+  const num = Number(value);
+  if (isNaN(num)) {
+    throw new Error(`${fieldName} must be a valid number`);
+  }
+  return num;
+};
+
+
 export default function getSales(req, res, next) {
   try {
+    const search = normalizeParam(req.query.search);
+    const region = normalizeParam(req.query.region);
+    const gender = normalizeParam(req.query.gender);
+    const category = normalizeParam(req.query.category);
+    const tags = normalizeParam(req.query.tags);
+    const payment = normalizeParam(req.query.payment);
+    const dateFrom = normalizeParam(req.query.dateFrom);
+    const dateTo = normalizeParam(req.query.dateTo);
+    const sort = normalizeParam(req.query.sort);
 
-    const getParam = (param) => {
-      if (Array.isArray(param)) {
-        return param[0] || "";
+    let page = 1;
+    let ageFrom = null;
+    let ageTo = null;
+
+    try {
+      page = parseInt(normalizeParam(req.query.page) || "1", 10);
+      if (isNaN(page) || page < 1) {
+        throw new Error("Page must be a positive integer");
       }
-      return param || "";
-    };
+    } catch (err) {
+      throw new Error(`Invalid page parameter: ${err.message}`);
+    }
+
+    try {
+      if (req.query.ageFrom) {
+        ageFrom = validateNumeric(req.query.ageFrom, "Age From");
+      }
+      if (req.query.ageTo) {
+        ageTo = validateNumeric(req.query.ageTo, "Age To");
+      }
+      if (ageFrom && ageTo && ageFrom > ageTo) {
+        throw new Error("Age From cannot be greater than Age To");
+      }
+    } catch (err) {
+      throw new Error(`Invalid age parameter: ${err.message}`);
+    }
 
     const response = salesService({
-      search: getParam(req.query.search),
-      region: getParam(req.query.region),
-      gender: getParam(req.query.gender),
-      ageFrom: getParam(req.query.ageFrom),
-      ageTo: getParam(req.query.ageTo),
-      category: getParam(req.query.category),
-      tags: getParam(req.query.tags),
-      payment: getParam(req.query.payment),
-      dateFrom: getParam(req.query.dateFrom),
-      dateTo: getParam(req.query.dateTo),
-      sort: getParam(req.query.sort),
-      page: parseInt(getParam(req.query.page) || 1)
+      search,
+      region,
+      gender,
+      ageFrom,
+      ageTo,
+      category,
+      tags,
+      payment,
+      dateFrom,
+      dateTo,
+      sort,
+      page,
     });
 
     sendResponse(res, STATUS.OK, "Sales fetched successfully", response);
