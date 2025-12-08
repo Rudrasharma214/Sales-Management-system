@@ -3,8 +3,8 @@ export default function buildQuery(params) {
   const values = [];
 
   if (params.search) {
-    sql += " AND (LOWER(customer_name) LIKE ? OR phone_number LIKE ?)";
-    const q = `%${params.search.toLowerCase()}%`;
+    sql += " AND (customer_name LIKE ? OR phone_number LIKE ?)";
+    const q = `${params.search}%`;
     values.push(q, q);
   }
 
@@ -33,7 +33,7 @@ export default function buildQuery(params) {
     values.push(params.category);
   }
 
-  if (params.tags && typeof params.tags === 'string') {
+  if (params.tags && typeof params.tags === "string") {
     sql += " AND LOWER(tags) LIKE ?";
     values.push(`%${params.tags.toLowerCase()}%`);
   }
@@ -52,7 +52,6 @@ export default function buildQuery(params) {
     sql += " AND date <= ?";
     values.push(params.dateTo);
   }
-
 
   if (params.sort === "date") {
     sql += " ORDER BY date DESC";
