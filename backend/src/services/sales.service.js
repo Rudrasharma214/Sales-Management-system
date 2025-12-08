@@ -1,4 +1,4 @@
-import db from "../db.js";
+import db from "../config/db.js";
 import buildQuery from "../utils/buildQuery.js";
 import STATUS from "../utils/statusCode.js";
 import AppError from "../utils/AppError.js";

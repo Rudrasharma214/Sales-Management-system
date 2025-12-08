@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import salesRouter from "./routes/sales.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
+import { createIndexes } from "./config/indexes.js";
 
+createIndexes();
 const app = express();
 
 const allowedOrigins = [
