@@ -9,7 +9,7 @@ const TableRow = ({ row }) => {
       <td className="px-4 py-3.5 border-b text-sm">{row.customer_name}</td>
 
       <td className="px-4 py-3.5 border-b text-sm text-gray-700">
-        {row.phone_number}
+        +91 {row.phone_number}
 
         <button
           onClick={() => copyToClipboard(row.phone_number)}

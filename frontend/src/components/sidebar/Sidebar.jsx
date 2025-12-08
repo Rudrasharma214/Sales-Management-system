@@ -8,7 +8,8 @@ import {
   Ban,
   CheckCircle,
   FileText,
-  ClipboardList
+  ClipboardList,
+  ChevronDown
 } from "lucide-react";
 
 import SidebarItem from "./SidebarItem.jsx";
@@ -18,17 +19,16 @@ const Sidebar = () => {
   const [invoicesOpen, setInvoicesOpen] = useState(true);
 
   return (
-    <aside className="h-screen w-56 bg-[#F8F9FA] border-r border-gray-200 flex flex-col">
+    <aside className="h-screen w-55 bg-[#F8F9FA] border-r border-gray-200 flex flex-col">
 
-      <div className="px-3 py-3 flex items-center gap-2 border-b border-gray-200 bg-white">
-        <div className="w-8 h-8 rounded-md bg-[#EDF2FE] flex items-center justify-center">
-          <span className="text-lg font-semibold text-blue-700">V</span>
-        </div>
+      <div className="px-3 py-3 flex items-center gap-2  bg-transparent">
+        <img src="/logo.png" alt="Vault Logo" className="w-10 h-10 rounded-lg object-cover" />
 
         <div className="flex flex-col leading-tight">
-          <span className="text-[13px] font-semibold text-gray-900">Vault</span>
-          <span className="text-[11px] text-gray-500">Anurag Yadav</span>
+          <span className="text-[16px] font-semibold text-gray-900">Vault</span>
+          <span className="text-[14px] text-gray-500">Anurag Yadav</span>
         </div>
+          <ChevronDown size={14} />
       </div>
 
       <nav className="flex-1 px-2 py-3 flex flex-col gap-1.5">
