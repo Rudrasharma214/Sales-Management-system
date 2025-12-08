@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import useDebounce from "../../hooks/useDebounce";
 
 const SearchBar = ({ query, setQuery }) => {
   const [value, setValue] = useState(query.search);
 
-  const handleDebouncedSearch = (debouncedValue) => {
+  const handleDebouncedSearch = useCallback((debouncedValue) => {
     setQuery((prev) => {
       if (prev.search === debouncedValue) return prev;
       return { ...prev, search: debouncedValue, page: 1 };
     });
-  };
+  }, [setQuery]);
 
   useDebounce(value, handleDebouncedSearch, 300);
 
