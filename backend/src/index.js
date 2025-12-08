@@ -3,6 +3,8 @@ import cors from "cors";
 import salesRouter from "./routes/sales.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import { createIndexes } from "./config/indexes.js";
+import { sendResponse } from "./utils/sendResponse.js";
+import STATUS from "./utils/statusCode.js";
 
 createIndexes();
 const app = express();
@@ -28,7 +30,7 @@ app.use(express.json());
 app.use("/api/sales", salesRouter);
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "Server running" });
+  sendResponse(res, STATUS.OK, "API is healthy", { status: "OK" });
 });
 
 app.listen(3000, () => {

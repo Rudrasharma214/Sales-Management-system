@@ -53,7 +53,7 @@ export default function buildQuery(params) {
     values.push(params.dateTo);
   }
 
-  // Sorting
+
   if (params.sort === "date") {
     sql += " ORDER BY date DESC";
   } else if (params.sort === "quantity") {
@@ -62,7 +62,6 @@ export default function buildQuery(params) {
     sql += " ORDER BY customer_name ASC";
   }
 
-  // Pagination
   const pageSize = 10;
   const offset = (params.page - 1) * pageSize;
 

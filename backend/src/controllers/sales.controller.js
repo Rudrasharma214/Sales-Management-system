@@ -4,7 +4,7 @@ import STATUS from '../utils/statusCode.js';
 
 export default function getSales(req, res, next) {
   try {
-    // Helper function to get the first value from an array or return the value
+
     const getParam = (param) => {
       if (Array.isArray(param)) {
         return param[0] || "";
