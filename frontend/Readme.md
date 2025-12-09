@@ -12,7 +12,7 @@ The frontend is a React (Vite) application providing search, filter, sort, and p
 
 ## 3. Search Implementation Summary
 
-Search is case-insensitive on customer name and phone. Input is debounced (400ms) to reduce API calls. Search automatically resets pagination to page 1 and works with all filters and sorting.
+Search is case-insensitive on customer name and phone. Input is debounced (800ms) to reduce API calls. Search automatically resets pagination to page 1 and works with all filters and sorting.
 
 ## 4. Filter Implementation Summary
 

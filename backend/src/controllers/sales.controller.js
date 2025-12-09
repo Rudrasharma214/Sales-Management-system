@@ -5,7 +5,7 @@ import STATUS from '../utils/statusCode.js';
 
 const normalizeParam = (param) => {
   if (Array.isArray(param)) {
-    return param[0]?.toString().trim() || "";
+    return param.map(p => p?.toString().trim()).filter(p => p);
   }
   return param?.toString().trim() || "";
 };

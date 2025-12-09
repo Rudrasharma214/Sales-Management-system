@@ -17,8 +17,20 @@ export default function useFilters(initialFilters) {
   }, []);
 
   const resetFilters = useCallback(() => {
-    setPendingFilters(initialFilters);
-  }, [initialFilters]);
+    setPendingFilters({
+      search: "",
+      region: [],
+      gender: [],
+      ageFrom: "",
+      ageTo: "",
+      category: [],
+      tags: [],
+      payment: [],
+      dateFrom: "",
+      dateTo: "",
+      sort: "",
+    });
+  }, []);
 
   const hasSelectedFilters =
     pendingFilters.region.length > 0 ||

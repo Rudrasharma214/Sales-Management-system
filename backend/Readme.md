@@ -30,7 +30,7 @@ Page size is fixed at 10. SQL uses `LIMIT` and `OFFSET`. Response includes total
 
 1. `cd backend`
 2. `npm install`
-3. Create `.env` (e.g., PORT, Frontend path)
+3. Create `.env` (e.g., PORT, FRONTEND_URL)
 4. `npm run dev` for development or `npm start` for production
 
 SQLite database initializes automatically and loads sample data if present.

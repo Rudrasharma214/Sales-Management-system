@@ -8,14 +8,18 @@ export default function buildQuery(params) {
     values.push(q, q);
   }
 
-  if (params.region) {
-    sql += " AND customer_region = ?";
-    values.push(params.region);
+  if (params.region && params.region.length > 0) {
+    const regionArray = Array.isArray(params.region) ? params.region : [params.region];
+    const placeholders = regionArray.map(() => "?").join(",");
+    sql += ` AND customer_region IN (${placeholders})`;
+    values.push(...regionArray);
   }
 
-  if (params.gender) {
-    sql += " AND gender = ?";
-    values.push(params.gender);
+  if (params.gender && params.gender.length > 0) {
+    const genderArray = Array.isArray(params.gender) ? params.gender : [params.gender];
+    const placeholders = genderArray.map(() => "?").join(",");
+    sql += ` AND gender IN (${placeholders})`;
+    values.push(...genderArray);
   }
 
   if (params.ageFrom) {
@@ -28,19 +32,27 @@ export default function buildQuery(params) {
     values.push(Number(params.ageTo));
   }
 
-  if (params.category) {
-    sql += " AND product_category = ?";
-    values.push(params.category);
+  if (params.category && params.category.length > 0) {
+    const categoryArray = Array.isArray(params.category) ? params.category : [params.category];
+    const placeholders = categoryArray.map(() => "?").join(",");
+    sql += ` AND product_category IN (${placeholders})`;
+    values.push(...categoryArray);
   }
 
-  if (params.tags && typeof params.tags === "string") {
-    sql += " AND LOWER(tags) LIKE ?";
-    values.push(`%${params.tags.toLowerCase()}%`);
+  if (params.tags && params.tags.length > 0) {
+    const tagsArray = Array.isArray(params.tags) ? params.tags : [params.tags];
+    const placeholders = tagsArray.map(() => "LOWER(tags) LIKE ?").join(" OR ");
+    sql += ` AND (${placeholders})`;
+    tagsArray.forEach(tag => {
+      values.push(`%${tag.toLowerCase()}%`);
+    });
   }
 
-  if (params.payment) {
-    sql += " AND payment_method = ?";
-    values.push(params.payment);
+  if (params.payment && params.payment.length > 0) {
+    const paymentArray = Array.isArray(params.payment) ? params.payment : [params.payment];
+    const placeholders = paymentArray.map(() => "?").join(",");
+    sql += ` AND payment_method IN (${placeholders})`;
+    values.push(...paymentArray);
   }
 
   if (params.dateFrom) {

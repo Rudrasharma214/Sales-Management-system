@@ -158,7 +158,7 @@ const FiltersBar = ({ query, setQuery }) => {
 
           {/* Product Category */}
           <Dropdown label="Product Category" selectedCount={pendingFilters.category.length}>
-            {["Electronics", "Clothing", "Furniture", "Beauty", "Sports"].map((c) => (
+            {["Electronics", "Clothing", "Beauty"].map((c) => (
               <button
                 key={c}
                 onClick={() => toggleFilter("category", c)}
@@ -177,7 +177,7 @@ const FiltersBar = ({ query, setQuery }) => {
 
           {/* Tags */}
           <Dropdown label="Tags" selectedCount={pendingFilters.tags.length}>
-            {["wireless", "smart", "portable", "premium", "durable"].map((t) => (
+            {["wireless", "smart", "unisex", "skincare", "portable", "organic", "makeup", "gadgets", "fragrance-free", "formal", "fashion", "cotton", "casual", "beauty", "accessories"].map((t) => (
               <button
                 key={t}
                 onClick={() => toggleFilter("tags", t)}
@@ -242,7 +242,7 @@ const FiltersBar = ({ query, setQuery }) => {
           >
             <option value="">Sort by: Default</option>
             <option value="date">Date (Newest)</option>
-            <option value="quantity">Quantity</option>
+            <option value="quantity">Quantity (Maximum)</option>
             <option value="name">Customer Name (A–Z)</option>
           </select>
 
